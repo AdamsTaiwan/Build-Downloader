@@ -58,6 +58,7 @@ namespace BuildDownloader
         #region Fields
         internal MainWindow ui;
 
+        private int Type=1; //1=Old session format, 2=Build2020 session format
         private string filterSessionCode = "";
         private string filterTitle="";
         private string filterSlides = "";
@@ -78,15 +79,12 @@ namespace BuildDownloader
             set { SetProperty(ref this.title, value); }
         }
 
-
         private string status = "";
         public string Status
         {
             get { return this.status; }
             set { SetProperty(ref this.status, value); }
         }
-
-        public int Type=1;
 
         private string url = Res.DEFAULT_URL;
         public string URL
@@ -131,15 +129,16 @@ namespace BuildDownloader
         internal async void DownLoad()
         {
             var sw = new Stopwatch();
+            int cnt;
 
             try
             {
                 sw.Start();
                 this.Status = "Downloading session data...";
-                await DownloadSessions();
+                cnt=await DownloadSessions();
                 this.DV = new DataView(this.ds.Tables["B"]);
 
-                this.Status = $"Completed in {sw.Elapsed}";
+                this.Status = $"Found {cnt} sessions in {sw.Elapsed}";
             }
             catch (Exception ex)
             {
@@ -147,7 +146,7 @@ namespace BuildDownloader
             }
         }
 
-        internal async Task DownloadSessions()
+        internal async Task<int> DownloadSessions()
         {
             string json, json2;
             dynamic o;
@@ -222,6 +221,7 @@ namespace BuildDownloader
             }
             ds.WriteXmlSchema(Path.Combine(this.outputPath, Res.SessionSchema));
             ds.WriteXml(Path.Combine(this.outputPath, Res.SessionData));
+            return i;
         }
 
         internal async void LoadSessions()
