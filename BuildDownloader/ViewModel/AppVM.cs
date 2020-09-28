@@ -39,6 +39,7 @@ namespace BuildDownloader
                 path = ConfigurationManager.AppSettings["DefaultPath"];
             }
             this.OutputPath = path;
+            this.slideExt = path.Contains("Ignite2020") ? ".pdf" : ".pptx";
 
             this.ds = BuildSet.New();
             foreach (DataColumn c in ds.Tables[0].Columns)
@@ -63,6 +64,7 @@ namespace BuildDownloader
         private string filterTitle="";
         private string filterSlides = "";
         private string filterVideos = "";
+        private string slideExt="pptx";  //slide extension
 
         private DataSet ds = new DataSet("R");
 
@@ -461,8 +463,8 @@ namespace BuildDownloader
                     try
                     {
                         i++;
-                        this.Status = $" Downloading {i}/{cnt} {s.Code}.pptx....";
-                        toFile = Path.Combine(path, $"{s.Code}.pptx");
+                        this.Status = $" Downloading {i}/{cnt} {s.Code}{this.slideExt}....";
+                        toFile = Path.Combine(path, $"{s.Code}{this.slideExt}");
                         await DownloadResource(s.SlidesURL, toFile);
                     }
                     catch (Exception ex2)
@@ -602,7 +604,7 @@ namespace BuildDownloader
                     }
                     if (Convert.ToBoolean(r["hasSlides"]))
                     {
-                        slides = $@"Slides {r["slideDeck"]}<br/>{this.outputPath}\Media\{r["sessionCode"]}.pptx";
+                        slides = $@"Slides {r["slideDeck"]}<br/>{this.outputPath}\Media\{r["sessionCode"]}{this.slideExt}";
                     }
                     tmp2 = tmp2.Replace("[hasSlides]", slides);
                     tmp2 = tmp2.Replace(Environment.NewLine, "<br/>");
