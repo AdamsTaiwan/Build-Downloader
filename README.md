@@ -14,6 +14,7 @@ Build-Downloader is a tool to help download the resource text and links from Mic
 - Can now download resources from Ignite 2019
 - Build 2019 is no longer available
 - Build 2020 is now available
+- Ignite 2020 is now available
 
 ## Usage
 
