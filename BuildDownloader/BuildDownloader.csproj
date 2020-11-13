@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net472;net50-windows</TargetFrameworks>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworks>net472;net5.0-windows</TargetFrameworks>
     <AssemblyTitle>BuildDownloader</AssemblyTitle>
     <Product>BuildDownloader</Product>
     <Copyright>Copyright © 2019-2020</Copyright>

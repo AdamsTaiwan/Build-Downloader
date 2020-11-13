@@ -4,6 +4,7 @@
 
 - Initial release
 
-## 2020.11.14
+## 2020.11.14 v2.0
 
 - Migrated project type and added Net5.0 compile target
+
