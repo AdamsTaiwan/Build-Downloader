@@ -21,14 +21,16 @@ namespace BuildDownloader
             this.dsFeedList = FeedList.New();
             this.dsFeedList.ReadXml("FeedList.xml");
             this.DVFeed = new DataView(this.dsFeedList.Tables[0]);
-            if (this.dsFeedList.Tables[0].Rows.Count>0)
+            if (this.dsFeedList.Tables[0].Rows.Count > 0)
             {
 #if NET472  //.Net 4.7.2 code here
+                this.Title = $"{Res.DEFAULT_TITLE} (.Net 4.7.2)";
                 LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count-1]);   //select last feed
 #endif
 #if NET     //.Net 5.0 code here
+                this.Title = $"{Res.DEFAULT_TITLE} (.Net 5.0)";
                 LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
-#endif                
+#endif   
             }
             else
             {
