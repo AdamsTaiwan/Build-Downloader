@@ -21,6 +21,7 @@ namespace BuildDownloader
                         
             this.vm.InitUI();
 
+            this.cbFeed.SelectionChanged += (s, e) => this.vm.FeedSelected(s);
             this.btnDownload.Click += (s, e) => this.vm.DownLoad();
             this.btnLoad.Click += (s, e) => this.vm.LoadSessions();
             this.btnBrowse.Click += (s, e) => this.vm.BrowseFolder();

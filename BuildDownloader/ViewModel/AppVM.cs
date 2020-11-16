@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -19,44 +18,68 @@ namespace BuildDownloader
     {
         public AppVM()
         {
-            string type = Res.DEFAULT_TYPE;
-            if (ConfigurationManager.AppSettings["DefaultType"]?.Length > 0)
+            this.dsFeedList = FeedList.New();
+            this.dsFeedList.ReadXml("FeedList.xml");
+            this.DVFeed = new DataView(this.dsFeedList.Tables[0]);
+            if (this.dsFeedList.Tables[0].Rows.Count>0)
             {
-                type = ConfigurationManager.AppSettings["DefaultType"];
+#if NET472  //.Net 4.7.2 code here
+                LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count-1]);   //select last feed
+#endif
+#if NET     //.Net 5.0 code here
+                LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
+#endif                
             }
-            this.Type = Convert.ToInt32(type);
-
-            string url = Res.DEFAULT_URL;
-            if (ConfigurationManager.AppSettings["DefaultURL"]?.Length > 0)
+            else
             {
-                url = ConfigurationManager.AppSettings["DefaultURL"];
-            }
-            this.URL = url;
-
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            if (ConfigurationManager.AppSettings["DefaultPath"]?.Length > 0)
-            {
-                path = ConfigurationManager.AppSettings["DefaultPath"];
-            }
-            this.OutputPath = path;
-            this.slideExt = path.Contains("Ignite2020") ? ".pdf" : ".pptx";
+                LoadRow(null);
+            }          
 
             this.ds = BuildSet.New();
-            foreach (DataColumn c in ds.Tables[0].Columns)
+            foreach (DataColumn c in this.ds.Tables[0].Columns)
             {
                 this.Fields.Add(c.ColumnName);
             }
             this.CanLoad = File.Exists(Path.Combine(this.outputPath, Res.SessionData));
         }
 
+        private void LoadRow(DataRow r)
+        {
+            string type= Res.DEFAULT_TYPE;
+            string path= Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string url= Res.DEFAULT_URL;
+
+            this.cr = r;
+
+            if (r!=null)
+            {
+                if (this.cr != null)
+                {
+                    type = this.cr["type"].ToString();
+                    path = this.cr["saveto"].ToString();
+                    url = this.cr["url"].ToString();
+                }
+            }
+
+            this.Type = Convert.ToInt32(type);
+            this.OutputPath = path;
+            this.slideExt = path.Contains("Ignite2020") ? ".pdf" : ".pptx";
+            this.URL = url;
+        }
+
+ 
 
         internal void InitUI()
         {
             this.ui.tbTemplate.Text = File.ReadAllText(Res.ResourceFile);
+            if (this.dsFeedList.Tables[0].Rows.Count>0)
+            {
+                this.ui.cbFeed.SelectedIndex = this.dsFeedList.Tables[0].Rows.Count - 1;
+            }
         }
 
 
-        #region Fields
+#region Fields
         internal MainWindow ui;
 
         private int Type=1; //1=Old session format, 2=Build2020 session format
@@ -66,68 +89,94 @@ namespace BuildDownloader
         private string filterVideos = "";
         private string slideExt="pptx";  //slide extension
 
+        private DataSet dsFeedList = new DataSet("R");
         private DataSet ds = new DataSet("R");
 
+        private DataRow cr; //current row
         private DataView dv = new DataView();
+#endregion
 
-        #endregion
 
-
-        #region INotify
+#region INotify
         private string title = Res.DEFAULT_TITLE;
         public string Title
         {
-            get { return this.title; }
-            set { SetProperty(ref this.title, value); }
+            get => this.title;
+            set => SetProperty(ref this.title, value);
         }
 
         private string status = "";
         public string Status
         {
-            get { return this.status; }
-            set { SetProperty(ref this.status, value); }
+            get => this.status;
+            set => SetProperty(ref this.status, value);
         }
 
         private string url = Res.DEFAULT_URL;
         public string URL
         {
-            get { return this.url; }
-            set { SetProperty(ref this.url, value); }
+            get => this.url;
+            set => SetProperty(ref this.url, value);
         }
 
         private string outputPath = "";
         public string OutputPath
         {
-            get { return this.outputPath; }
-            set { SetProperty(ref this.outputPath, value); }
+            get => this.outputPath;
+            set => SetProperty(ref this.outputPath, value);
         }
 
         private bool canLoad = false;
         public bool CanLoad
         {
-            get { return this.canLoad; }
-            set { SetProperty(ref this.canLoad, value); }
+            get => this.canLoad;
+            set => SetProperty(ref this.canLoad, value);
         }
 
 
         private ObservableCollection<string> fields = new ObservableCollection<string>();
         public ObservableCollection<string> Fields
         {
-            get { return this.fields; }
-            set { SetProperty(ref this.fields, value); }
+            get => this.fields;
+            set => SetProperty(ref this.fields, value);
         }
 
 
         public DataView DV
         {
-            get { return this.dv; }
-            set { SetProperty(ref this.dv, value); }
+            get => this.dv;
+            set => SetProperty(ref this.dv, value);
         }
+
+        private DataView dvFeed =new DataView();
+        public DataView DVFeed
+        {
+            get => this.dvFeed;
+            set => SetProperty(ref this.dvFeed, value);
+        }
+
 
         #endregion
 
 
         #region Methods
+        internal void FeedSelected(object s)
+        {
+            ComboBox cbi;
+            DataRowView drv;
+            try
+            {
+                cbi = s as ComboBox;
+                drv = cbi.SelectedItem as DataRowView;
+                LoadRow(drv.Row);
+
+            }
+            catch (Exception ex)
+            {
+                this.Status = $"Error {ex.Message}";
+            }
+        }
+
         internal async void DownLoad()
         {
             var sw = new Stopwatch();
@@ -187,7 +236,7 @@ namespace BuildDownloader
                         d = item.description.ToString().Replace("’", "'").Replace("â€™", "'");
                     }
 
-                    r = ds.Tables["B"].NewRow();
+                    r = this.ds.Tables["B"].NewRow();
 
                     r["sessionId"] = item.sessionId;
                     r["sessionCode"] = item.sessionCode;
@@ -212,7 +261,7 @@ namespace BuildDownloader
                     r["hasChanged"] = hasChanged;
                     r["desciption"] = item.description;
 
-                    ds.Tables["B"].Rows.Add(r);
+                    this.ds.Tables["B"].Rows.Add(r);
 
                     Trace.WriteLine($"INF {i} {item.sessionId}");
                 }
@@ -221,8 +270,8 @@ namespace BuildDownloader
                     Trace.WriteLine($"ERR {i} {item.sessionId} {ex.Message}");
                 }
             }
-            ds.WriteXmlSchema(Path.Combine(this.outputPath, Res.SessionSchema));
-            ds.WriteXml(Path.Combine(this.outputPath, Res.SessionData));
+            this.ds.WriteXmlSchema(Path.Combine(this.outputPath, Res.SessionSchema));
+            this.ds.WriteXml(Path.Combine(this.outputPath, Res.SessionData));
             return i;
         }
 
@@ -234,7 +283,7 @@ namespace BuildDownloader
                 await Task.Run(() =>
                 {
                     this.ds = BuildSet.New();
-                    ds.ReadXml(Path.Combine(this.outputPath, Res.SessionData));
+                    this.ds.ReadXml(Path.Combine(this.outputPath, Res.SessionData));
                 });
                 this.DV = new DataView(this.ds.Tables["B"]);
                 this.Status = "";
@@ -633,6 +682,6 @@ namespace BuildDownloader
             MessageBox.Show(ex.Message, sender);
         }
 
-        #endregion
+#endregion
     }
 }
