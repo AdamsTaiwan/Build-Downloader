@@ -20,7 +20,7 @@ Build-Downloader is a tool to help download the resource text and links from Mic
 ## Usage
 
 - Select a path for the downloaded session media.
-- A DefaultPath can be set in the App.config file.
+- A FeelList.xml file contains urls and output paths to conference resources.
 - Click Open to open the path in Explorer.
 - Click Load to open a previous downloaded session list.
 - Click Download to download sessions.
