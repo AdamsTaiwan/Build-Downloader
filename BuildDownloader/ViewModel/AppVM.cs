@@ -18,24 +18,31 @@ namespace BuildDownloader
     {
         public AppVM()
         {
+            var v = "4.7.2";
             this.dsFeedList = FeedList.New();
             this.dsFeedList.ReadXml("FeedList.xml");
             this.DVFeed = new DataView(this.dsFeedList.Tables[0]);
             if (this.dsFeedList.Tables[0].Rows.Count > 0)
             {
 #if NET472  //.Net 4.7.2 code here
-                this.Title = $"{Res.DEFAULT_TITLE} (.Net 4.7.2)";
+                this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count-1]);   //select last feed
 #endif
 #if NET     //.Net 5.0 code here
-                this.Title = $"{Res.DEFAULT_TITLE} (.Net 5.0)";
+#if NET5_0_OR_GREATER
+                v = "5.0";
+#if NET6_0_OR_GREATER
+                v = "6.0";
+#endif
+#endif
+                this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
 #endif   
             }
             else
             {
                 LoadRow(null);
-            }          
+            }
 
             this.ds = BuildSet.New();
             foreach (DataColumn c in this.ds.Tables[0].Columns)
@@ -47,13 +54,13 @@ namespace BuildDownloader
 
         private void LoadRow(DataRow r)
         {
-            string type= Res.DEFAULT_TYPE;
-            string path= Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string url= Res.DEFAULT_URL;
+            string type = Res.DEFAULT_TYPE;
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string url = Res.DEFAULT_URL;
 
             this.cr = r;
 
-            if (r!=null)
+            if (r != null)
             {
                 if (this.cr != null)
                 {
@@ -69,37 +76,37 @@ namespace BuildDownloader
             this.URL = url;
         }
 
- 
+
 
         internal void InitUI()
         {
             this.ui.tbTemplate.Text = File.ReadAllText(Res.ResourceFile);
-            if (this.dsFeedList.Tables[0].Rows.Count>0)
+            if (this.dsFeedList.Tables[0].Rows.Count > 0)
             {
                 this.ui.cbFeed.SelectedIndex = this.dsFeedList.Tables[0].Rows.Count - 1;
             }
         }
 
 
-#region Fields
+        #region Fields
         internal MainWindow ui;
 
-        private int Type=1; //1=Old session format, 2=Build2020 session format
+        private int Type = 1; //1=Old session format, 2=Build2020 session format
         private string filterSessionCode = "";
-        private string filterTitle="";
+        private string filterTitle = "";
         private string filterSlides = "";
         private string filterVideos = "";
-        private string slideExt="pptx";  //slide extension
+        private string slideExt = "pptx";  //slide extension
 
         private DataSet dsFeedList = new DataSet("R");
         private DataSet ds = new DataSet("R");
 
         private DataRow cr; //current row
         private DataView dv = new DataView();
-#endregion
+        #endregion
 
 
-#region INotify
+        #region INotify
         private string title = Res.DEFAULT_TITLE;
         public string Title
         {
@@ -150,7 +157,7 @@ namespace BuildDownloader
             set => SetProperty(ref this.dv, value);
         }
 
-        private DataView dvFeed =new DataView();
+        private DataView dvFeed = new DataView();
         public DataView DVFeed
         {
             get => this.dvFeed;
@@ -188,7 +195,7 @@ namespace BuildDownloader
             {
                 sw.Start();
                 this.Status = "Downloading session data...";
-                cnt=await DownloadSessions();
+                cnt = await DownloadSessions();
                 this.DV = new DataView(this.ds.Tables["B"]);
 
                 this.Status = $"Found {cnt} sessions in {sw.Elapsed}";
@@ -684,6 +691,6 @@ namespace BuildDownloader
             MessageBox.Show(ex.Message, sender);
         }
 
-#endregion
+        #endregion
     }
 }
