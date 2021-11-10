@@ -35,7 +35,7 @@
                         <Button Name="btnLoad"     Margin="2,1,0,2" Width="60" ToolTip="Load from file" Content="Load" IsEnabled="{Binding CanLoad}" />
                         <TextBlock Text="URL" Margin="2" Padding="2"/>
                         <TextBox Text="{Binding URL}" MinWidth="100" Margin="2"/>
-                        <Button Name="btnDownload" Margin="2,1,0,2" Width="60" Content="Download" />
+                        <Button Name="btnDownload" Margin="2,1,0,2" Width="60" Content="Download" IsEnabled="{Binding CanDownload}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="1">
                         <TextBlock Text="Filter" Style="{StaticResource tbHighlight}"/>

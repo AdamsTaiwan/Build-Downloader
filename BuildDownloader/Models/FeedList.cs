@@ -13,6 +13,7 @@ namespace BuildDownloader
                 new DataColumn("name", typeof(string), "", MappingType.Attribute),
                 new DataColumn("type", typeof(int), "", MappingType.Attribute),
                 new DataColumn("saveto", typeof(string), "", MappingType.Attribute),
+                new DataColumn("closed", typeof(int), "", MappingType.Attribute), //0=open,1=closed
                 new DataColumn("url", typeof(string), "", MappingType.Attribute),
                 new DataColumn("note", typeof(string), "", MappingType.Attribute)
             });

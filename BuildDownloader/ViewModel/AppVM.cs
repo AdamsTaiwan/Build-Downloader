@@ -28,13 +28,8 @@ namespace BuildDownloader
                 this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count-1]);   //select last feed
 #endif
-#if NET     //.Net 5.0 code here
-#if NET5_0_OR_GREATER
-                v = "5.0";
-#if NET6_0_OR_GREATER
-                v = "6.0";
-#endif
-#endif
+#if NET     //.Net code here
+                v = "6.x";
                 this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
 #endif   
@@ -57,6 +52,7 @@ namespace BuildDownloader
             string type = Res.DEFAULT_TYPE;
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string url = Res.DEFAULT_URL;
+            bool candownload = false;
 
             this.cr = r;
 
@@ -67,13 +63,15 @@ namespace BuildDownloader
                     type = this.cr["type"].ToString();
                     path = this.cr["saveto"].ToString();
                     url = this.cr["url"].ToString();
+                    candownload = Convert.ToInt32(this.cr["closed"]) == 0;
                 }
             }
 
             this.Type = Convert.ToInt32(type);
             this.OutputPath = path;
-            this.slideExt = path.Contains("Ignite2020") ? ".pdf" : ".pptx";
+            this.slideExt = path.Contains("Ignite20") ? ".pdf" : ".pptx";
             this.URL = url;
+            this.CanDownload = candownload;
         }
 
 
@@ -140,6 +138,13 @@ namespace BuildDownloader
         {
             get => this.canLoad;
             set => SetProperty(ref this.canLoad, value);
+        }
+
+        private bool canDownload = false;
+        public bool CanDownload
+        {
+            get => this.canDownload;
+            set => SetProperty(ref this.canDownload, value);
         }
 
 
