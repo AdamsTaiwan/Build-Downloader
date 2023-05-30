@@ -26,10 +26,10 @@ namespace BuildDownloader
             {
 #if NET472  //.Net 4.7.2 code here
                 this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
-                LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count-1]);   //select last feed
+                LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count - 1]);   //select last feed
 #endif
 #if NET     //.Net code here
-                v = "6.x";
+                v = "7.x";
                 this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
 #endif   
@@ -91,6 +91,7 @@ namespace BuildDownloader
 
         private int Type = 1; //1=Old session format, 2=Build2020 session format
         private string filterSessionCode = "";
+        private string filterLangLocale = "";
         private string filterTitle = "";
         private string filterSlides = "";
         private string filterVideos = "";
@@ -202,6 +203,7 @@ namespace BuildDownloader
                 this.Status = "Downloading session data...";
                 cnt = await DownloadSessions();
                 this.DV = new DataView(this.ds.Tables["B"]);
+                this.ui.tbLang.Text = "en-US";
 
                 this.Status = $"Found {cnt} sessions in {sw.Elapsed}";
             }
@@ -224,6 +226,7 @@ namespace BuildDownloader
             DataRow r;
 
             c = new HttpClient();
+            c.Timeout = TimeSpan.FromMinutes(5);
 
             json = await c.GetStringAsync(this.url);
             json2 = json.Replace("OMG", "").Replace("\\\"\\\"", "");        //Cleanup
@@ -252,13 +255,23 @@ namespace BuildDownloader
 
                     r = this.ds.Tables["B"].NewRow();
 
+                    r["id"] = Guid.NewGuid().ToString();
                     r["sessionId"] = item.sessionId;
+                    r["langLocale"] = item.langLocale;
                     r["sessionCode"] = item.sessionCode;
                     r["title"] = item.title;
                     r["sortRank"] = item.sortRank;
-                    r["level"] = item.level;
+                    if (this.Type == 3)
+                    {
+                        r["level"] = getItemDetail(item.level);
+                        r["sessionType"] = getItemDetail(item.sessionType);
+                    }
+                    else
+                    {
+                        r["level"] = item.level;
+                        r["sessionType"] = item.sessionType;
+                    }
                     r["sessionTypeId"] = item.sessionTypeId;
-                    r["sessionType"] = item.sessionType;
                     r["durationInMinutes"] = item.durationInMinutes;
                     r["lastUpdate"] = item.lastUpdate;
                     r["visibleInSessionListing"] = item.visibleInSessionListing;
@@ -289,6 +302,16 @@ namespace BuildDownloader
             return i;
         }
 
+        private string getItemDetail(dynamic item)
+        {
+            string l = item.displayValue;
+            if (l != item.logicalValue.ToString())
+            {
+                l = $"{l} ({item.logicalValue})";
+            }
+            return l;
+        }
+
         internal async void LoadSessions()
         {
             try
@@ -300,6 +323,7 @@ namespace BuildDownloader
                     this.ds.ReadXml(Path.Combine(this.outputPath, Res.SessionData));
                 });
                 this.DV = new DataView(this.ds.Tables["B"]);
+                this.ui.tbLang.Text = "en-US";
                 this.Status = "";
             }
             catch (Exception ex)
@@ -362,6 +386,20 @@ namespace BuildDownloader
             {
                 var ui = (TextBox)s;
                 this.filterSessionCode = ui.Text;
+                ApplyFilter();
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex);
+            }
+        }
+
+        internal void LangLocaleChanged(object s)
+        {
+            try
+            {
+                var ui = (TextBox)s;
+                this.filterLangLocale = ui.Text;
                 ApplyFilter();
             }
             catch (Exception ex)
@@ -441,6 +479,11 @@ namespace BuildDownloader
                         sb.Append($"sessionCode LIKE '%{this.filterSessionCode}%'");
                         delim = " AND ";
                     }
+                    if (this.filterLangLocale.Length > 0)
+                    {
+                        sb.Append($"langLocale LIKE '%{this.filterLangLocale}%'");
+                        delim = " AND ";
+                    }
                     if (this.filterTitle.Length > 0)
                     {
                         sb.Append($"title LIKE '%{this.filterTitle}%'");
@@ -471,6 +514,7 @@ namespace BuildDownloader
         internal void ClearFilters()
         {
             this.ui.tbSessionCode.Text = "";
+            this.ui.tbLang.Text = "";
             this.ui.tbTitle.Text = "";
             this.ui.chkSlides.IsChecked = false;
             this.ui.chkVideos.IsChecked = false;

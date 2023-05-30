@@ -10,7 +10,9 @@ namespace BuildDownloader
             DataTable dt = new DataTable("B");
 
             dt.Columns.AddRange(new DataColumn[] {
+                new DataColumn("id", typeof(string), "", MappingType.Attribute),
                 new DataColumn("sessionId", typeof(string), "", MappingType.Attribute),
+                new DataColumn("langLocale", typeof(string), "", MappingType.Attribute),
                 new DataColumn("sessionCode", typeof(string), "", MappingType.Attribute),
                 new DataColumn("title", typeof(string), "", MappingType.Attribute),
                 new DataColumn("sortRank", typeof(string), "", MappingType.Attribute),
@@ -29,7 +31,7 @@ namespace BuildDownloader
                 new DataColumn("hasChanged", typeof(bool), "", MappingType.Attribute),
                 new DataColumn("desciption", typeof(string), "", MappingType.Attribute)
             });
-            dt.PrimaryKey = new DataColumn[] { dt.Columns[0] };
+            dt.PrimaryKey = new DataColumn[] { dt.Columns[0]};
             ds.Tables.Add(dt);
             return ds;
         }

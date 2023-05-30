@@ -27,6 +27,7 @@ namespace BuildDownloader
             this.btnBrowse.Click += (s, e) => this.vm.BrowseFolder();
             this.btnOpen.Click += (s, e) => this.vm.OpenFolder();
             this.tbSessionCode.TextChanged += (s, e) => this.vm.SessionCodeChanged(s);
+            this.tbLang.TextChanged += (s, e) => this.vm.LangLocaleChanged(s);
             this.tbTitle.TextChanged += (s, e) => this.vm.TitelChanged(s);
             this.chkSlides.Click += (s, e) => this.vm.SlidesClicked(s);
             this.chkVideos.Click += (s, e) => this.vm.VideosClicked(s);

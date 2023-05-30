@@ -28,19 +28,21 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Feed"     Margin="2" Padding="0,2"/>
                         <ComboBox Name="cbFeed" Margin="2" ItemsSource="{Binding DVFeed}" DisplayMemberPath="name" />
+                        <TextBlock Text="URL" Margin="2" Padding="2"/>
+                        <TextBox Text="{Binding URL}" MinWidth="100" Margin="2"/>
+                        <Button Name="btnDownload" Margin="2,1,0,2" Width="60" Content="Download" IsEnabled="{Binding CanDownload}"/>
                         <TextBlock Text="Path"     Margin="2" Padding="0,2"/>
                         <TextBox Text="{Binding OutputPath}" MinWidth="100" Margin="2"/>
                         <Button x:Name="btnBrowse" Margin="2,1,0,2" Width="20" ToolTip="Select Folder" Content="..." />
                         <Button x:Name="btnOpen"   Margin="2,1,0,2" Width="60" ToolTip="Open Folder" Content="Open"/>
                         <Button Name="btnLoad"     Margin="2,1,0,2" Width="60" ToolTip="Load from file" Content="Load" IsEnabled="{Binding CanLoad}" />
-                        <TextBlock Text="URL" Margin="2" Padding="2"/>
-                        <TextBox Text="{Binding URL}" MinWidth="100" Margin="2"/>
-                        <Button Name="btnDownload" Margin="2,1,0,2" Width="60" Content="Download" IsEnabled="{Binding CanDownload}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="1">
                         <TextBlock Text="Filter" Style="{StaticResource tbHighlight}"/>
                         <TextBlock Text="Session Code" Margin="2" Padding="0,2"/>
                         <TextBox Name="tbSessionCode" MinWidth="50" Margin="2"/>
+                        <TextBlock Text="Lang-Locale" Margin="2" Padding="0,2"/>
+                        <TextBox Name="tbLang" MinWidth="40" Margin="2" />
                         <TextBlock Text="Title" Margin="2" Padding="0,2"/>
                         <TextBox Name="tbTitle" MinWidth="50" Margin="2"/>
                         <CheckBox Name="chkSlides" Content="Slides" Margin="2,5,4,0" Padding="0"/>
@@ -53,6 +55,7 @@
                 IsReadOnly="True" EnableRowVirtualization="True" AutoGenerateColumns="False" Grid.Row="2" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Session Code" Binding="{Binding sessionCode}"/>
+                            <DataGridTextColumn Header="Lang." Binding="{Binding langLocale}"/>
                             <DataGridTextColumn Header="Session Type" Binding="{Binding sessionType}"/>
                             <DataGridTextColumn Header="Level" Binding="{Binding level}"/>
                             <DataGridTextColumn Header="Title" Binding="{Binding title}"/>

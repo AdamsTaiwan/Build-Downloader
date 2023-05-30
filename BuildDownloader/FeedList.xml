@@ -4,6 +4,9 @@
   <Feed name="Ignite 2019" type="1" saveto="C:\1\01_Archive\Ignite2019" closed="1" url="https://api-myignite.techcommunity.microsoft.com/api/session/all" note="" />
   <Feed name="Build 2020" type="2" saveto="C:\1\01_Archive\Build2020" closed="1" url="https://api.mybuild.microsoft.com/api/session/all" note="" />
   <Feed name="Ignite 2020" type="1" saveto="C:\1\01_Archive\Ignite2020" closed="1" url="https://api.myignite.microsoft.com/api/session/all" note="" />
-  <Feed name="Build 2021" type="2" saveto="C:\1\01_Archive\Build2021" closed="0" url="https://api.mybuild.microsoft.com/api/session/all" note="" />
-  <Feed name="Ignite 2021" type="1" saveto="C:\1\01_Archive\Ignite2021" closed="0" url="https://api.myignite.microsoft.com/api/session/all" note="" />
+  <Feed name="Build 2021" type="2" saveto="C:\1\01_Archive\Build2021" closed="1" url="https://api.mybuild.microsoft.com/api/session/all" note="" />
+  <Feed name="Ignite 2021" type="1" saveto="C:\1\01_Archive\Ignite2021" closed="1" url="https://api.myignite.microsoft.com/api/session/all" note="" />
+  <Feed name="Build 2022" type="2" saveto="C:\1\01_Archive\Build2022" closed="1" url="https://api.mybuild.microsoft.com/api/session/all" note="" />
+  <Feed name="Ignite 2022" type="1" saveto="C:\1\01_Archive\Ignite2022" closed="0" url="https://api.ignite.microsoft.com/api/session/all" note="" />
+  <Feed name="Build 2023" type="3" saveto="C:\1\01_Archive\Build2023" closed="0" url="https://api.build.microsoft.com/api/session/all" note="" />
 </R>
