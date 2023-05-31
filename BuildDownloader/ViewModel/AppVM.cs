@@ -408,7 +408,7 @@ namespace BuildDownloader
             }
         }
 
-        internal void TitelChanged(object s)
+        internal void TitleChanged(object s)
         {
             try
             {
@@ -481,12 +481,12 @@ namespace BuildDownloader
                     }
                     if (this.filterLangLocale.Length > 0)
                     {
-                        sb.Append($"langLocale LIKE '%{this.filterLangLocale}%'");
+                        sb.Append($"{delim}langLocale LIKE '%{this.filterLangLocale}%'");
                         delim = " AND ";
                     }
                     if (this.filterTitle.Length > 0)
                     {
-                        sb.Append($"title LIKE '%{this.filterTitle}%'");
+                        sb.Append($"{delim}title LIKE '%{this.filterTitle}%'");
                         delim = " AND ";
                     }
                     if (this.filterSlides.Length > 0)
