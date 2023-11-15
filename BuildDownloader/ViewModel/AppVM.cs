@@ -29,7 +29,7 @@ namespace BuildDownloader
                 LoadRow(this.dsFeedList.Tables[0].Rows[this.dsFeedList.Tables[0].Rows.Count - 1]);   //select last feed
 #endif
 #if NET     //.Net code here
-                v = "7.x";
+                v = "8.x";
                 this.Title = $"{Res.DEFAULT_TITLE} (.Net {v})";
                 LoadRow(this.dsFeedList.Tables[0].Rows[^1]);   //select last feed
 #endif   
@@ -60,6 +60,7 @@ namespace BuildDownloader
             {
                 if (this.cr != null)
                 {
+                    this.FeedName = this.cr["name"].ToString();
                     type = this.cr["type"].ToString();
                     path = this.cr["saveto"].ToString();
                     url = this.cr["url"].ToString();
@@ -83,12 +84,30 @@ namespace BuildDownloader
             {
                 this.ui.cbFeed.SelectedIndex = this.dsFeedList.Tables[0].Rows.Count - 1;
             }
+
+            this.ui.cbFeed.SelectionChanged += (s, e) => this.FeedSelected(s);
+            this.ui.btnDownload.Click += (s, e) => this.DownLoad();
+            this.ui.btnLoad.Click += (s, e) => this.LoadSessions();
+            this.ui.btnBrowse.Click += (s, e) => this.BrowseFolder();
+            this.ui.btnOpen.Click += (s, e) => this.OpenFolder();
+            this.ui.tbSessionCode.TextChanged += (s, e) => this.SessionCodeChanged(s);
+            this.ui.tbLang.TextChanged += (s, e) => this.LangLocaleChanged(s);
+            this.ui.tbTitle.TextChanged += (s, e) => this.TitleChanged(s);
+            this.ui.chkSlides.Click += (s, e) => this.SlidesClicked(s);
+            this.ui.chkVideos.Click += (s, e) => this.VideosClicked(s);
+            this.ui.btnClearFilters.Click += (s, e) => this.ClearFilters();
+            this.ui.btnGetSlides.Click += (s, e) => this.GetSlides();
+            this.ui.btnGetVideos.Click += (s, e) => this.GetVideos();
+            this.ui.btnCreateMarkup.Click += (s, e) => this.CreateForWeb();
+            this.ui.dgMain.SelectionChanged += (s, e) => this.SelectionChanged(s);
+            this.ui.lbFields.SelectionChanged += (s, e) => this.Fields_SelectionChanged(s);
         }
 
 
         #region Fields
         internal MainWindow ui;
 
+        private string FeedName = ""; 
         private int Type = 1; //1=Old session format, 2=Build2020 session format
         private string filterSessionCode = "";
         private string filterLangLocale = "";
@@ -658,12 +677,12 @@ namespace BuildDownloader
 
         internal void CreateForWeb()
         {
-            string tmp = "";
+            string tmp = "";    //for template processing
             string tmp2 = "";
             string slides;
             string[] lines;
-            var sb = new StringBuilder();
-            var sb2 = new StringBuilder();
+            var sb = new StringBuilder();   //Text before template
+            var sb2 = new StringBuilder();  //Text after template
             int i = 0;
             var sw = new Stopwatch();
             try
@@ -689,7 +708,7 @@ namespace BuildDownloader
                             switch (i)
                             {
                                 case 0:
-                                    sb.AppendLine(line);
+                                    sb.AppendLine(line.Replace("{feed}", this.FeedName));
                                     break;
                                 case 1:
                                     tmp += $"{line}{Environment.NewLine}";

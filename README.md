@@ -15,7 +15,7 @@ Build-Downloader is a tool to help download the resource text and links from Mic
 - Build 2019 is no longer available
 - Build 2020 is now available
 - Ignite 2020 is now available
-- Now Multi-Targets: .Net 4.7.2 and .Net 5.0
+- Now Multi-Targets: .Net 4.7.2 and .Net 8.0
 
 ## Usage
 
