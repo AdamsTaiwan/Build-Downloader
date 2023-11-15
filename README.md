@@ -1,7 +1,7 @@
 # Build-Downloader
 Microsoft Build Downloader Tool
 
-Build-Downloader is a tool to help download the resource text and links from Microsoft's Build 2019 event and generate text that can then be copied to OneNote.
+Build-Downloader is a tool to help download the resource text and links from Microsoft's Build and Ignite events and generate text that can then be copied to OneNote.
 
 ## Features
 
@@ -11,10 +11,9 @@ Build-Downloader is a tool to help download the resource text and links from Mic
 - Download slides
 - Download videos
 - Generate text for OneNote
-- Can now download resources from Ignite 2019
-- Build 2019 is no longer available
-- Build 2020 is now available
-- Ignite 2020 is now available
+- Previous Build and Ignite feeds are marked as closed, but still loadable from local store
+- Build 2023 is now available
+- Ignite 2023 is now available
 - Now Multi-Targets: .Net 4.7.2 and .Net 8.0
 
 ## Usage
